@@ -1,0 +1,430 @@
+<apex:page controller="MasterDataManagementController" docType="html-5.0">
+    <apex:includeScript value="https://cdn.tailwindcss.com" />
+    <apex:includeScript value="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" />
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f7fbff;
+            color: #0b2347;
+        }
+
+        header {
+            background: linear-gradient(to bottom right, #d7f1feff, #b8ddf6);
+            background-image: url('https://cdn.prod.website-files.com/6331fdb067d0d2e7fcce41d8/660d776dc447990a8bf631bf_careers-hero--image.svg');
+            background-repeat: no-repeat;
+            background-position: right center;
+            background-size: contain;
+            padding: 3rem 2rem;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header img {
+            width: 140px;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0b2347;
+            margin-bottom: 1rem;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: #243b5a;
+            max-width: 500px;
+            margin-bottom: 2rem;
+        }
+
+        .apply-btn {
+            background-color: #3d527d;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .apply-btn:hover {
+            background-color: #2f4164;
+            transform: translateY(-1px);
+        }
+
+        /* Status message */
+        .status-message {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem auto 2rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            max-width: 900px;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .status-message.success {
+            background-color: #e6f7ed;
+            color: #0b2347;
+        }
+
+        .status-message.error {
+            background-color: #fde8e8;
+            color: #0b2347;
+        }
+
+        /* Cards section */
+        .cards-section {
+            background-color: #ffffff;
+            padding: 4rem 2rem;
+        }
+
+        .card {
+            background: #ffffffcc;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(61, 82, 125, 0.1);
+            border: 1px solid #dbe3f3;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(61, 82, 125, 0.2);
+        }
+
+        .card h2 {
+            color: #0b2347;
+        }
+
+        .card-icon {
+            background-color: #d7f1feff;
+            border-radius: 50%;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: #3d527d;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-color: #2f4164;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(61, 82, 125, 0.3);
+        }
+
+        /* Dashboard section */
+        .dashboard-section {
+            background-color: #0b2347;
+            color: #ffffff;
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        .dashboard-section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #d7f1feff;
+        }
+
+        .metric-label {
+            color: #c8d9f0;
+            font-size: 1rem;
+        }
+
+        /* Typing / Chat */
+        .typing {
+            font-size: 1.25rem;
+            color: #ffffff;
+            border-right: 3px solid #d7f1feff;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 100%;
+            animation: typing 3s steps(40, end) forwards, blink .75s step-end infinite;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        @keyframes typing { from { width: 0; } to { width: 100%; } }
+        @keyframes blink { 50% { border-color: transparent; } }
+
+        .chat-container {
+            position: relative;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .chat-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            box-shadow: 0 4px 10px rgba(61, 82, 125, 0.1);
+        }
+
+        .chat-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            background-color: #eef7ff;
+            transition: all 0.2s;
+            color: #0b2347;
+        }
+
+        .chat-box input:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 2px #3d527d;
+        }
+
+        .custom-send-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #3d527d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(61, 82, 125, 0.3);
+            transition: all 0.2s;
+        }
+
+        .custom-send-btn:hover {
+            background-color: #2f4164;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .thinking {
+            text-align: center;
+            color: #ffffff;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+    </style>
+
+    <!-- HERO SECTION -->
+    <header>
+        <img src="https://cdn.prod.website-files.com/6331fdb067d0d2e7fcce41d8/63d7e4dcc375a62efe51e399_bunnylogo.png" alt="Company Logo" />
+    <h1> Automations Page </h1>
+    </header>
+
+    <!-- STATUS MESSAGE -->
+    <apex:outputPanel id="statusPanel">
+        <apex:outputText value="{!statusMessage}" styleClass="status-message {!IF(CONTAINS(statusMessage, 'Error') || CONTAINS(statusMessage, '❌'), 'error', 'success')}" rendered="{!NOT(ISNULL(statusMessage))}" />
+    </apex:outputPanel>
+
+    <!-- AUTOMATION CARDS -->
+    <section class="cards-section">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <!-- Import Nursing Home Accounts -->
+            <div class="card p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="card-icon mr-4">
+                            <i data-feather="home" style="color:#3d527d;"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold">Import Nursing Home Accounts</h2>
+                    </div>
+                    <p class="text-gray-700 mb-4">Import and update nursing home account data from external sources.</p>
+                </div>
+                <div class="text-center">
+                    <apex:form >
+                        <apex:commandButton value="Run Import" action="{!runImportAccounts}" rerender="statusPanel" styleClass="btn-primary" />
+                    </apex:form>
+                </div>
+            </div>
+
+            <!-- Import Admin Contacts -->
+            <div class="card p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="card-icon mr-4">
+                            <i data-feather="users" style="color:#3d527d;"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold">Import Admin Contacts</h2>
+                    </div>
+                    <p class="text-gray-700 mb-4">Import administrator contact information for each facility.</p>
+                </div>
+                <div class="text-center">
+                    <apex:form >
+                        <apex:commandButton value="Import Contacts" action="{!importAdminContacts}" rerender="statusPanel" styleClass="btn-primary" />
+                    </apex:form>
+                </div>
+            </div>
+
+            <!-- Assign Accounts -->
+            <apex:form >
+                <div class="card p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center mb-4">
+                            <div class="card-icon mr-4">
+                                <i data-feather="user-check" style="color:#3d527d;"></i>
+                            </div>
+                            <h2 class="text-xl font-semibold">Assign Accounts</h2>
+                        </div>
+                        <p class="text-gray-700 mb-6">
+                            Logged in as: <strong>{!$User.FirstName} {!$User.LastName}</strong><br/>
+                            <em>Current Territory:</em> <strong>{!IF(ISBLANK($User.Territory__c), 'Unassigned', $User.Territory__c)}</strong>
+                        </p>
+                        <p class="text-gray-700 mb-4">Automatically assign accounts to the appropriate sales representatives.</p>
+                    </div>
+                    <div class="text-center">
+                        <apex:commandButton value="Assign My Accounts" action="{!assignAccounts}" styleClass="btn-primary" rerender="statusPanel" />
+                    </div>
+                </div>
+            </apex:form>
+        </div>
+    </section>
+
+    <!-- DASHBOARD SECTION -->
+    <section class="dashboard-section">
+        <h2>Where we are today</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-16">
+            <div class="metric-card">
+                <p class="metric-value">{!totalAccounts}</p>
+                <p class="metric-label">Total Accounts</p>
+            </div>
+            <div class="metric-card">
+                <p class="metric-value">{!totalContacts}</p>
+                <p class="metric-label">Total Contacts</p>
+            </div>
+            <div class="metric-card">
+                <p class="metric-value">{!assignedAccounts}</p>
+                <p class="metric-label">Assigned Accounts</p>
+            </div>
+        </div>
+
+        <!-- Greeting -->
+        <div id="greetingText" class="typing">
+            Hello {!$User.FirstName}... how are you today? What would you like to know?
+        </div>
+
+        <!-- Chat -->
+        <apex:form id="chatForm">
+            <apex:inputHidden id="threadId" value="{!threadId}" />
+            <apex:inputHidden id="threadId_query" value="{!threadId_query}" />
+            <apex:commandButton id="invisibleBtn" value="Invisible" action="{!get_conversation}" style="display:none;" />
+            <apex:commandButton id="invisibleBtn2" value="Invisible" action="{!askQuery}" style="display:none;" />
+
+            <div class="chat-container">
+                <div class="chat-box">
+                    <apex:inputText value="{!userInput}" id="userInput" html-placeholder="Ask the AI something..." />
+                    <apex:commandButton value="➤" action="{!sendAIChat}" onclick="updateGreeting();" rerender="statusPanel,chatForm" styleClass="custom-send-btn" status="chatStatus" />
+                </div>
+            </div>
+
+            <apex:actionStatus id="chatStatus">
+                <facet name="start">
+                    <div class="thinking">🤔 Thinking... please wait.</div>
+                </facet>
+                <facet name="stop"><div></div></facet>
+            </apex:actionStatus>
+        </apex:form>
+    </section>
+
+    <apex:form id="chatFormd">
+        <apex:actionFunction name="runGetConversation" action="{!get_conversation}" rerender="statusPanel,chatForm" status="chatStatus"/>
+    </apex:form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var threadIdInput = document.getElementById('{!$Component.chatForm.threadId}');
+            if (threadIdInput && threadIdInput.value && threadIdInput.value !== 'None' && threadIdInput.value !== 'false') {
+                setTimeout(function() {
+                    runGetConversation();
+                    threadIdInput.value = 'false';
+                }, 6000);
+            }
+        });
+    </script>
+
+    <script>
+        feather.replace();
+
+        function updateGreeting() {
+            const greeting = document.getElementById('greetingText');
+            if (greeting) startThinkingAnimation(greeting);
+            runAfterDelay();
+        }
+
+        function runAfterDelay() {
+            setTimeout(function() {
+                const invisibleBtn2 = document.getElementById('{!$Component.chatForm.invisibleBtn2}');
+                if (invisibleBtn2) invisibleBtn2.click();
+            }, 6000);
+            
+            setTimeout(function() {
+                const invisibleBtn = document.getElementById('{!$Component.chatForm.invisibleBtn}');
+                if (invisibleBtn) invisibleBtn.click();
+            }, 13000);
+        }
+
+        let thinkingInterval;
+        function startThinkingAnimation(element) {
+            let dots = 0;
+            element.innerText = '🤔 Thinking';
+            if (thinkingInterval) clearInterval(thinkingInterval);
+            thinkingInterval = setInterval(() => {
+                dots = (dots + 1) % 4;
+                element.innerText = '🤔 Thinking' + '.'.repeat(dots);
+            }, 500);
+        }
+
+        function stopThinkingAnimation() {
+            if (thinkingInterval) clearInterval(thinkingInterval);
+            thinkingInterval = null;
+        }
+    </script>
+</apex:page>
